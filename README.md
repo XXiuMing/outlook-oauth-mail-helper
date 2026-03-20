@@ -1,37 +1,125 @@
 # outlook-oauth-mail-helper
 
-A lightweight Python CLI for reading and sending Outlook mail through Microsoft Graph using OAuth refresh tokens.
+A practical Python CLI for **reading, sending, drafting, replying, searching, and exporting Outlook email** through **Microsoft Graph**, with first-class support for **OAuth refresh-token workflows**.
 
-It supports the refresh-token format commonly exported by the `assast/outlookEmail` project and can also work with a normal access-token-based config.
+It is designed for people who already have a usable Outlook / Microsoft OAuth refresh token and want a lightweight command-line tool instead of a full web panel.
 
-## Features
+---
 
-- Read inbox messages
-- Read a single message
-- Search messages in a folder
-- Send mail
-- Create drafts and send drafts
-- Reply / reply-all
-- Upload small and large attachments
+## Why this project exists
+
+Most Outlook automation examples fall into one of these buckets:
+
+- too heavyweight
+- too tied to a web dashboard
+- too incomplete for real mailbox work
+- or assume you want to build an entire Microsoft app integration from scratch
+
+This project aims to be the opposite:
+
+- **small enough to understand quickly**
+- **practical enough for daily use**
+- **good at real mailbox tasks**
+- **friendly to refresh-token-based setups**
+
+It works especially well if you already have a `client_id + refresh_token` pair from an Outlook OAuth flow and want to turn that into a usable mail CLI.
+
+---
+
+## What it can do
+
+### Mail reading
+- List inbox messages
+- Read a full message
+- Search messages inside a folder
+- List draft messages
 - List mail folders
+
+### Mail sending
+- Send a new email
+- Create drafts
+- Send existing drafts
+- Reply to a message
+- Reply-all to a message
+
+### Attachments
+- Attach files to drafts
+- Upload **small attachments directly**
+- Upload **large attachments with Graph upload sessions**
+- List attachments on a message
+- Download one attachment
+- Download all file attachments
+
+### Message management
 - Mark read / unread
-- Move and delete messages
-- List attachments
-- Download one or all attachments
-- Save message body to a file
+- Move messages to another folder
+- Delete messages
+- Save message body as `.txt` or `.html`
+
+### OAuth / token flow
+- Use a normal `access_token` config
+- Or use **refresh-token-first config**
+- Automatically refresh access tokens when needed
+- Persist updated tokens back to config
+
+---
+
+## Feature summary
+
+| Area | Supported |
+|---|---|
+| Inbox listing | Yes |
+| Read full message | Yes |
+| Search | Yes |
+| Send mail | Yes |
+| Drafts | Yes |
+| Reply / reply-all | Yes |
+| Small attachment upload | Yes |
+| Large attachment upload | Yes |
+| Attachment listing | Yes |
+| Single attachment download | Yes |
+| Bulk attachment download | Yes |
+| Folder listing | Yes |
+| Move / delete | Yes |
+| Mark read / unread | Yes |
+| Save body to file | Yes |
+
+---
 
 ## Installation
 
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/XXiuMing/outlook-oauth-mail-helper.git
+cd outlook-oauth-mail-helper
+```
+
+### 2. Install dependency
+
 ```bash
 pip install -r requirements.txt
+```
+
+### 3. Make the script executable
+
+```bash
 chmod +x outlook_oauth_mail.py
 ```
 
-Optional shell alias:
+### 4. Optional: add a shell alias
 
 ```bash
-alias outlook-mail='python3 /path/to/outlook_oauth_mail.py'
+alias outlook-mail='python3 /absolute/path/to/outlook_oauth_mail.py'
 ```
+
+After that, you can use:
+
+```bash
+outlook-mail inbox -n 10
+```
+
+---
 
 ## Configuration
 
@@ -41,7 +129,19 @@ Default config path:
 ~/.outlook-oauth/config.json
 ```
 
-Example:
+You can also pass a custom config path with:
+
+```bash
+python3 outlook_oauth_mail.py --config /path/to/config.json inbox
+```
+
+---
+
+## Config formats
+
+### Option A: refresh-token-first config
+
+This is the most common setup for this project.
 
 ```json
 {
@@ -52,9 +152,47 @@ Example:
 }
 ```
 
+### Option B: access token + refresh token config
+
+```json
+{
+  "access_token": "<ACCESS_TOKEN>",
+  "refresh_token": "<REFRESH_TOKEN>",
+  "client_id": "<CLIENT_ID>",
+  "tenant": "common",
+  "scope": "https://graph.microsoft.com/.default",
+  "expires_at": 1760000000
+}
+```
+
+### Field meanings
+
+- `client_id`: Microsoft app client ID
+- `refresh_token`: OAuth refresh token
+- `access_token`: optional current access token
+- `tenant`: usually `common`, `consumers`, or a tenant ID
+- `scope`: token refresh scope; by default this project uses `https://graph.microsoft.com/.default`
+- `expires_at`: optional Unix timestamp for access token expiry
+
+---
+
+## Token refresh behavior
+
+The CLI automatically refreshes tokens when:
+
+- there is **no** `access_token` but a valid `refresh_token` exists
+- the current token is near expiry
+- Microsoft Graph returns `401`
+
+If refresh succeeds, the tool writes the new token values back into your config file.
+
+---
+
 ## Common commands
 
-### Inbox
+## Inbox
+
+### List latest messages
 
 ```bash
 python3 outlook_oauth_mail.py inbox -n 10
@@ -67,14 +205,18 @@ python3 outlook_oauth_mail.py inbox -u
 python3 outlook_oauth_mail.py read <message_id>
 ```
 
-### Search
+### Search in a folder
 
 ```bash
 python3 outlook_oauth_mail.py search "keyword"
 python3 outlook_oauth_mail.py search "invoice" --folder inbox -n 20
 ```
 
-### Send mail
+---
+
+## Sending mail
+
+### Send a new message
 
 ```bash
 python3 outlook_oauth_mail.py send \
@@ -83,50 +225,204 @@ python3 outlook_oauth_mail.py send \
   --body "Hello"
 ```
 
-### Drafts and attachments
+### Send HTML mail
 
 ```bash
-python3 outlook_oauth_mail.py draft --to someone@example.com --subject "Draft" --body "Body"
-python3 outlook_oauth_mail.py attach <draft_id> /path/to/file.pdf
+python3 outlook_oauth_mail.py send \
+  --to someone@example.com \
+  --subject "HTML Test" \
+  --body "<b>Hello</b>" \
+  --html
+```
+
+---
+
+## Drafts
+
+### Create a draft
+
+```bash
+python3 outlook_oauth_mail.py draft \
+  --to someone@example.com \
+  --subject "Draft title" \
+  --body "Draft content"
+```
+
+### List drafts
+
+```bash
+python3 outlook_oauth_mail.py drafts -n 20
+```
+
+### Send an existing draft
+
+```bash
 python3 outlook_oauth_mail.py send-draft <draft_id>
 ```
 
-### Replies
+---
+
+## Replies
+
+### Create a reply draft
 
 ```bash
 python3 outlook_oauth_mail.py reply <message_id> --body "Thanks"
+```
+
+### Reply-all and send immediately
+
+```bash
 python3 outlook_oauth_mail.py reply <message_id> --body "Thanks" --all --send-now
 ```
 
-### Attachments
+---
+
+## Attachments
+
+### Attach a file to a draft
+
+```bash
+python3 outlook_oauth_mail.py attach <draft_id> /path/to/file.pdf
+```
+
+Behavior:
+
+- files **<= 3 MB**: direct upload
+- files **> 3 MB**: Graph upload session / chunked upload
+
+### List attachments on a message
 
 ```bash
 python3 outlook_oauth_mail.py attachments <message_id>
+```
+
+### Download one attachment
+
+```bash
 python3 outlook_oauth_mail.py download-attachment <message_id> <attachment_id> --outdir ./downloads
+```
+
+### Download all file attachments
+
+```bash
 python3 outlook_oauth_mail.py download-all-attachments <message_id> --outdir ./downloads
 ```
 
-### Mail management
+---
+
+## Mail management
+
+### List folders
 
 ```bash
 python3 outlook_oauth_mail.py folders
+```
+
+### Mark read / unread
+
+```bash
 python3 outlook_oauth_mail.py mark <message_id> --read
+python3 outlook_oauth_mail.py mark <message_id> --unread
+```
+
+### Move a message
+
+```bash
 python3 outlook_oauth_mail.py move <message_id> archive
+python3 outlook_oauth_mail.py move <message_id> deleteditems
+```
+
+### Delete a message
+
+```bash
 python3 outlook_oauth_mail.py delete <message_id>
 ```
 
-### Save message body
+---
+
+## Export message body
+
+### Save body as plain text
 
 ```bash
 python3 outlook_oauth_mail.py save-body <message_id> --outdir ./saved-mails
+```
+
+### Save body as HTML
+
+```bash
 python3 outlook_oauth_mail.py save-body <message_id> --outdir ./saved-mails --html
 ```
 
+---
+
+## OAuth helper URL
+
+If you need an authorization URL:
+
+```bash
+python3 outlook_oauth_mail.py auth-url
+```
+
+By default the auth URL uses a scope pattern aligned with Outlook Graph read/write flows.
+
+---
+
+## Practical workflows
+
+### Read then reply
+
+```bash
+python3 outlook_oauth_mail.py inbox -n 5
+python3 outlook_oauth_mail.py read <message_id>
+python3 outlook_oauth_mail.py reply <message_id> --body "Got it, thanks."
+```
+
+### Create draft with attachment and send
+
+```bash
+python3 outlook_oauth_mail.py draft --to someone@example.com --subject "Report" --body "See attached."
+python3 outlook_oauth_mail.py attach <draft_id> ./report.pdf
+python3 outlook_oauth_mail.py send-draft <draft_id>
+```
+
+### Export an email and its attachments
+
+```bash
+python3 outlook_oauth_mail.py save-body <message_id> --outdir ./export
+python3 outlook_oauth_mail.py download-all-attachments <message_id> --outdir ./export
+```
+
+---
+
 ## Security notes
 
-- Never commit real OAuth tokens.
-- Keep your real config in `~/.outlook-oauth/config.json` or another ignored path.
-- This repo includes only `config.example.json`.
+- **Never commit real OAuth tokens**
+- Keep your real config in `~/.outlook-oauth/config.json` or another ignored path
+- This repository only includes `config.example.json`
+- Review your refresh token source and permissions before use
+
+---
+
+## Current limitations
+
+- no resumable recovery for interrupted large-file uploads yet
+- search currently works folder-by-folder instead of whole-mailbox search
+- HTML-to-text body export uses simple tag stripping, not full HTML rendering
+
+---
+
+## Who this is for
+
+This project is useful if you want:
+
+- a small Outlook CLI
+- Microsoft Graph mail automation without a heavy app framework
+- refresh-token-based mailbox operations
+- scripting-friendly mail workflows on Linux servers or remote boxes
+
+---
 
 ## License
 
