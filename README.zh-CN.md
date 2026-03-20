@@ -6,9 +6,9 @@
 [![Python Check](https://img.shields.io/github/actions/workflow/status/XXiuMing/outlook-oauth-mail-helper/python-check.yml?branch=main&label=python%20check)](https://github.com/XXiuMing/outlook-oauth-mail-helper/actions/workflows/python-check.yml)
 [![License](https://img.shields.io/github/license/XXiuMing/outlook-oauth-mail-helper)](./LICENSE)
 
-`outlook-oauth-mail-helper` 是一个基于 **Microsoft Graph** 的 Outlook 邮件命令行工具。
+`outlook-oauth-mail-helper` 是一个基于 Microsoft Graph 的 Outlook 邮件命令行工具。
 
-它面向的是很直接的邮箱工作：看邮件、发邮件、建草稿、回复、处理附件，以及导出正文和附件内容。项目同时支持基于 **OAuth refresh token** 的配置方式，所以如果你已经有可用的 `client_id + refresh_token`，可以很方便地把它变成一套可脚本化、可在终端中使用的邮件工作流。
+它面向的是比较直接的邮箱工作：读邮件、发邮件、建草稿、回复、处理附件，以及导出正文和附件内容。项目同时支持基于 refresh token 的配置方式，所以如果你已经有可用的 `client_id + refresh_token`，可以把它整理成一套适合在终端、服务器、VPS 或自动化脚本中使用的邮件工作流。
 
 ## 主要功能
 
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 chmod +x outlook_oauth_mail.py
 ```
 
-如果你想直接使用更短的命令，可以选择本地安装：
+如果你想直接使用更短的命令，可以本地安装：
 
 ```bash
 pip install -e .
@@ -167,7 +167,7 @@ outlook-mail save-body <message_id> --outdir ./saved-mails
 outlook-mail save-body <message_id> --outdir ./saved-mails --html
 ```
 
-## 终端使用示例
+## 使用示例
 
 ```bash
 outlook-mail inbox -n 5
@@ -183,7 +183,43 @@ outlook-mail attach <draft_id> ./report.pdf
 outlook-mail send-draft <draft_id>
 ```
 
-## 仓库内的工程化文件
+## 适用场景
+
+这个项目比较适合下面这些情况：
+
+- 想在 Linux 终端里直接处理 Outlook 邮件
+- 想在 VPS 或远程机器上跑邮件脚本
+- 想基于 Microsoft Graph 做轻量级邮件自动化
+- 已经有 refresh token，不想再依赖浏览器界面做日常操作
+
+## FAQ
+
+### 需要先自己做完整的微软应用集成吗？
+
+通常还是需要一个有效的 Microsoft OAuth 配置，不过这个工具的重点是：当你已经有可用的 `client_id + refresh_token` 时，可以直接把它变成一套可用的 CLI 工作流。
+
+### 支持大附件吗？
+
+支持。3 MB 以内直接上传，更大的文件会走 Graph upload session。
+
+### 会自动保存新的 token 吗？
+
+会。刷新成功后，新的 token 会自动写回配置文件。
+
+### 它是完整邮件客户端吗？
+
+不是。它更像一个面向实际任务的命令行工具，而不是桌面邮件客户端的替代品。
+
+## Roadmap
+
+后续如果继续打磨，比较值得做的方向包括：
+
+- 更细的附件下载过滤
+- 更好的 HTML 正文转文本效果
+- 比 smoke test 更完整的测试覆盖
+- 更完整的打包和发布流程
+
+## 仓库中的工程化文件
 
 当前仓库还包含：
 

@@ -6,9 +6,9 @@
 [![Python Check](https://img.shields.io/github/actions/workflow/status/XXiuMing/outlook-oauth-mail-helper/python-check.yml?branch=main&label=python%20check)](https://github.com/XXiuMing/outlook-oauth-mail-helper/actions/workflows/python-check.yml)
 [![License](https://img.shields.io/github/license/XXiuMing/outlook-oauth-mail-helper)](./LICENSE)
 
-`outlook-oauth-mail-helper` is a small Python CLI for working with Outlook mail through Microsoft Graph.
+`outlook-oauth-mail-helper` is a Python CLI for working with Outlook mail through Microsoft Graph.
 
-It is built for straightforward mailbox work: reading mail, sending mail, creating drafts, replying, handling attachments, and exporting content. The tool also supports refresh-token-based setups, so it can be used in environments where you already have a usable `client_id + refresh_token` pair and want a clean command-line workflow instead of a larger web application.
+The project is meant for everyday mailbox tasks: reading messages, sending mail, creating drafts, replying, handling attachments, exporting message content, and performing basic mailbox management from the command line. It also supports refresh-token-based setups, so it fits well in server, VPS, and automation environments where you already have a usable `client_id + refresh_token` pair.
 
 ## Highlights
 
@@ -33,13 +33,13 @@ pip install -r requirements.txt
 chmod +x outlook_oauth_mail.py
 ```
 
-If you want a shorter command, you can either install it as a local package:
+If you want a shorter command, you can install it locally:
 
 ```bash
 pip install -e .
 ```
 
-or set an alias:
+or define an alias:
 
 ```bash
 alias outlook-mail='python3 /absolute/path/to/outlook_oauth_mail.py'
@@ -182,6 +182,42 @@ outlook-mail draft --to someone@example.com --subject "Report" --body "See attac
 outlook-mail attach <draft_id> ./report.pdf
 outlook-mail send-draft <draft_id>
 ```
+
+## Use cases
+
+This project is a good fit if you want to:
+
+- work with Outlook mail from a Linux shell
+- automate mailbox tasks on a VPS or remote machine
+- build simple scripts around Microsoft Graph mail operations
+- manage a mailbox with refresh-token-based authentication rather than a browser UI
+
+## FAQ
+
+### Do I need to create a full Microsoft app integration first?
+
+Usually you need a valid Microsoft OAuth setup, but the tool is designed to work well once you already have a usable `client_id + refresh_token` pair.
+
+### Can it handle large attachments?
+
+Yes. Files up to 3 MB are uploaded directly. Larger files use a Graph upload session.
+
+### Does it store tokens automatically?
+
+Yes. When token refresh succeeds, updated token values are written back to the config file.
+
+### Is this intended to be a full mail client?
+
+No. It is a command-line helper for practical mailbox operations, not a replacement for a desktop mail application.
+
+## Roadmap
+
+Short-term improvements that would make sense for future versions:
+
+- better attachment download filtering
+- more polished text export for HTML bodies
+- broader test coverage beyond smoke checks
+- optional packaging and release automation improvements
 
 ## Project files
 
