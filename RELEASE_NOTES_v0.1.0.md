@@ -69,7 +69,7 @@ outlook-mail download-all-attachments <message_id> --outdir ./downloads
 
 ### Notes
 
-This release is intended as a practical first version for real mailbox work, not just a demo.
+This release is intended as a practical first version for everyday mailbox work.
 
 ### Security reminder
 
@@ -146,7 +146,7 @@ outlook-mail download-all-attachments <message_id> --outdir ./downloads
 
 ### 说明
 
-这个版本的目标是提供一套可实际使用的邮件工作流，而不只是演示脚本。
+这个版本的目标是提供一套适合日常邮箱工作的可用 CLI。
 
 ### 安全提醒
 

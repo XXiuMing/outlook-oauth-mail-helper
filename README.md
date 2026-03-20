@@ -6,11 +6,11 @@
 [![Python Check](https://img.shields.io/github/actions/workflow/status/XXiuMing/outlook-oauth-mail-helper/python-check.yml?branch=main&label=python%20check)](https://github.com/XXiuMing/outlook-oauth-mail-helper/actions/workflows/python-check.yml)
 [![License](https://img.shields.io/github/license/XXiuMing/outlook-oauth-mail-helper)](./LICENSE)
 
-`outlook-oauth-mail-helper` is a Python CLI for working with Outlook mail through Microsoft Graph.
+`outlook-oauth-mail-helper` is a command-line tool for working with Outlook mail through Microsoft Graph.
 
-The project is meant for everyday mailbox tasks: reading messages, sending mail, creating drafts, replying, handling attachments, exporting message content, and performing basic mailbox management from the command line. It also supports refresh-token-based setups, so it fits well in server, VPS, and automation environments where you already have a usable `client_id + refresh_token` pair.
+It covers the common tasks you would expect in a mailbox workflow: reading messages, sending mail, creating drafts, replying, handling attachments, exporting message content, and performing basic folder operations. It also supports refresh-token-based setups, which makes it practical for server-side scripts, remote machines, and other non-interactive environments.
 
-## Highlights
+## Main features
 
 - Read inbox messages and full message content
 - Send new mail
@@ -96,7 +96,7 @@ The tool refreshes access tokens automatically when:
 
 If refresh succeeds, updated token values are written back to the config file.
 
-## Typical commands
+## Common commands
 
 ### Inbox
 
@@ -175,7 +175,7 @@ outlook-mail read <message_id>
 outlook-mail reply <message_id> --body "Got it, thanks."
 ```
 
-Or, for a draft with an attachment:
+For a draft with an attachment:
 
 ```bash
 outlook-mail draft --to someone@example.com --subject "Report" --body "See attached."
@@ -185,7 +185,7 @@ outlook-mail send-draft <draft_id>
 
 ## Use cases
 
-This project is a good fit if you want to:
+This project is useful if you want to:
 
 - work with Outlook mail from a Linux shell
 - automate mailbox tasks on a VPS or remote machine
@@ -194,30 +194,30 @@ This project is a good fit if you want to:
 
 ## FAQ
 
-### Do I need to create a full Microsoft app integration first?
+### Do I need a Microsoft OAuth setup first?
 
-Usually you need a valid Microsoft OAuth setup, but the tool is designed to work well once you already have a usable `client_id + refresh_token` pair.
+Yes. You still need a valid Microsoft OAuth configuration. The tool is mainly intended for the stage after that, when you already have usable credentials and want a practical CLI workflow.
 
 ### Can it handle large attachments?
 
 Yes. Files up to 3 MB are uploaded directly. Larger files use a Graph upload session.
 
-### Does it store tokens automatically?
+### Does it store refreshed tokens automatically?
 
 Yes. When token refresh succeeds, updated token values are written back to the config file.
 
-### Is this intended to be a full mail client?
+### Is this a full mail client?
 
-No. It is a command-line helper for practical mailbox operations, not a replacement for a desktop mail application.
+No. It is a command-line helper for common mailbox operations, not a replacement for a desktop mail application.
 
 ## Roadmap
 
-Short-term improvements that would make sense for future versions:
+Near-term improvements that would make sense for future versions include:
 
-- better attachment download filtering
-- more polished text export for HTML bodies
+- better filtering for attachment downloads
+- cleaner plain-text export for HTML-heavy messages
 - broader test coverage beyond smoke checks
-- optional packaging and release automation improvements
+- incremental packaging and release improvements
 
 ## Project files
 
@@ -237,7 +237,7 @@ This repository includes:
 
 ## Current scope
 
-`v0.1.0` is the first public release. It already covers common day-to-day mailbox tasks, including sending, drafting, replying, attachment handling, folder operations, and body export.
+`v0.1.0` is the first public release. It already covers the core day-to-day tasks: sending, drafting, replying, attachment handling, folder operations, and body export.
 
 ## License
 
