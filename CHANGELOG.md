@@ -28,3 +28,6 @@ The format is inspired by Keep a Changelog.
 ### Documentation
 - Clarified token refresh scope usage
 - Added troubleshooting guidance for invalid_scope errors caused by mixing .default with resource-specific scopes
+
+### Verification
+- Ran an end-to-end local workflow check covering inbox read, message read, search, folders, mark read/unread, draft creation, small and large attachment upload, attachment download, body export, draft listing, move, and delete

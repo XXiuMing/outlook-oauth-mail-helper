@@ -71,6 +71,10 @@ outlook-mail download-all-attachments <message_id> --outdir ./downloads
 
 This release is intended as a practical first version for everyday mailbox work.
 
+### Verification note
+
+A local end-to-end workflow check was completed after release, covering inbox read, message read, search, folders, mark read/unread, draft creation, small and large attachment upload, attachment download, body export, draft listing, move, and delete.
+
 ### Security reminder
 
 Do not commit real OAuth credentials. Use `config.example.json` as a template only.
