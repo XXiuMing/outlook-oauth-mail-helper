@@ -206,6 +206,16 @@ outlook-mail send-draft <draft_id>
 
 会。刷新成功后，新的 token 会自动写回配置文件。
 
+### 如果刷新 token 时出现 `invalid_scope` 怎么办？
+
+先确认配置里使用的是：
+
+```json
+"scope": "https://graph.microsoft.com/.default"
+```
+
+不要把 `.default` 和 `Mail.Send`、`SMTP.Send` 之类的资源级 scope 混在同一次刷新请求里。
+
 ### 它是完整邮件客户端吗？
 
 不是。它更像一个面向日常邮箱任务的命令行工具，而不是桌面邮件客户端的替代品。

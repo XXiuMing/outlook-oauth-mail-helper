@@ -206,6 +206,16 @@ Yes. Files up to 3 MB are uploaded directly. Larger files use a Graph upload ses
 
 Yes. When token refresh succeeds, updated token values are written back to the config file.
 
+### What if token refresh fails with an `invalid_scope` error?
+
+Make sure your config is using:
+
+```json
+"scope": "https://graph.microsoft.com/.default"
+```
+
+Do not mix `.default` with resource-specific scopes such as `Mail.Send` or `SMTP.Send` in the same refresh request.
+
 ### Is this a full mail client?
 
 No. It is a command-line helper for common mailbox operations, not a replacement for a desktop mail application.

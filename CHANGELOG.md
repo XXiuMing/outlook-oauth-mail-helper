@@ -24,3 +24,7 @@ The format is inspired by Keep a Changelog.
 - Bilingual README support
 - GitHub release notes
 - Basic GitHub Actions syntax check workflow
+
+### Documentation
+- Clarified token refresh scope usage
+- Added troubleshooting guidance for invalid_scope errors caused by mixing .default with resource-specific scopes

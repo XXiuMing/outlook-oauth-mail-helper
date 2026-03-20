@@ -151,3 +151,14 @@ outlook-mail download-all-attachments <message_id> --outdir ./downloads
 ### 安全提醒
 
 不要提交真实 OAuth 凭据。仓库中的 `config.example.json` 仅用于示例。
+
+### 排障提示
+
+如果刷新 token 时出现 `invalid_scope`，先确认配置里使用的是：
+
+```json
+"scope": "https://graph.microsoft.com/.default"
+```
+
+不要把 `.default` 和资源级 scope 混在同一次刷新请求里。
+示例。
