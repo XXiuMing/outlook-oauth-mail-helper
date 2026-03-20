@@ -396,6 +396,18 @@ This version is already capable of real-world mailbox tasks, including reading, 
 
 ---
 
+## Project hygiene
+
+This repository also includes:
+
+- `CHANGELOG.md`
+- `CONTRIBUTING.md`
+- `SECURITY.md`
+- GitHub Actions workflow for basic Python syntax checks
+- Issue templates for bugs and feature requests
+
+---
+
 ## License
 
 MIT
