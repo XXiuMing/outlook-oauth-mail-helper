@@ -1,8 +1,30 @@
 # outlook-oauth-mail-helper
 
-A practical Python CLI for **reading, sending, drafting, replying, searching, and exporting Outlook email** through **Microsoft Graph**, with first-class support for **OAuth refresh-token workflows**.
+[中文说明 / Chinese README](./README.zh-CN.md)
+
+A practical Python CLI for **reading, sending, drafting, replying, searching, exporting, and managing Outlook email** through **Microsoft Graph**, with first-class support for **OAuth refresh-token workflows**.
 
 It is designed for people who already have a usable Outlook / Microsoft OAuth refresh token and want a lightweight command-line tool instead of a full web panel.
+
+---
+
+## Hero / Project intro
+
+**Outlook OAuth Mail Helper** is a small but capable command-line tool that turns Outlook OAuth credentials into a usable mailbox workflow.
+
+It focuses on the things people actually need:
+
+- check inbox quickly
+- read one message in full
+- search mail
+- create drafts
+- send mail
+- reply to mail
+- upload large attachments
+- export message body and attachments
+- move / delete / mark messages
+
+If you already have a `client_id + refresh_token` pair, this project gives you a direct and scriptable way to work with Outlook mail on a server, VPS, local machine, or automation box.
 
 ---
 
@@ -23,6 +45,61 @@ This project aims to be the opposite:
 - **friendly to refresh-token-based setups**
 
 It works especially well if you already have a `client_id + refresh_token` pair from an Outlook OAuth flow and want to turn that into a usable mail CLI.
+
+---
+
+## Terminal examples
+
+### Read inbox
+
+```bash
+outlook-mail inbox -n 5
+```
+
+Example output:
+
+```text
+{
+  "value": [
+    {
+      "id": "AQMk...",
+      "receivedDateTime": "2026-03-19T23:44:14Z",
+      "subject": "Body save test",
+      "isRead": true
+    }
+  ]
+}
+```
+
+### Send a message
+
+```bash
+outlook-mail send \
+  --to someone@example.com \
+  --subject "Test" \
+  --body "Hello from outlook-oauth-mail-helper"
+```
+
+Example output:
+
+```text
+Mail sent.
+```
+
+### Create a draft, attach a file, then send
+
+```bash
+outlook-mail draft --to someone@example.com --subject "Report" --body "See attached."
+outlook-mail attach <draft_id> ./report.pdf
+outlook-mail send-draft <draft_id>
+```
+
+### Export an email
+
+```bash
+outlook-mail save-body <message_id> --outdir ./export
+outlook-mail download-all-attachments <message_id> --outdir ./export
+```
 
 ---
 
@@ -135,13 +212,7 @@ You can also pass a custom config path with:
 python3 outlook_oauth_mail.py --config /path/to/config.json inbox
 ```
 
----
-
-## Config formats
-
 ### Option A: refresh-token-first config
-
-This is the most common setup for this project.
 
 ```json
 {
@@ -190,9 +261,7 @@ If refresh succeeds, the tool writes the new token values back into your config 
 
 ## Common commands
 
-## Inbox
-
-### List latest messages
+### Inbox
 
 ```bash
 python3 outlook_oauth_mail.py inbox -n 10
@@ -212,10 +281,6 @@ python3 outlook_oauth_mail.py search "keyword"
 python3 outlook_oauth_mail.py search "invoice" --folder inbox -n 20
 ```
 
----
-
-## Sending mail
-
 ### Send a new message
 
 ```bash
@@ -224,20 +289,6 @@ python3 outlook_oauth_mail.py send \
   --subject "Test" \
   --body "Hello"
 ```
-
-### Send HTML mail
-
-```bash
-python3 outlook_oauth_mail.py send \
-  --to someone@example.com \
-  --subject "HTML Test" \
-  --body "<b>Hello</b>" \
-  --html
-```
-
----
-
-## Drafts
 
 ### Create a draft
 
@@ -248,124 +299,37 @@ python3 outlook_oauth_mail.py draft \
   --body "Draft content"
 ```
 
-### List drafts
-
-```bash
-python3 outlook_oauth_mail.py drafts -n 20
-```
-
-### Send an existing draft
-
-```bash
-python3 outlook_oauth_mail.py send-draft <draft_id>
-```
-
----
-
-## Replies
-
-### Create a reply draft
+### Reply
 
 ```bash
 python3 outlook_oauth_mail.py reply <message_id> --body "Thanks"
-```
-
-### Reply-all and send immediately
-
-```bash
 python3 outlook_oauth_mail.py reply <message_id> --body "Thanks" --all --send-now
 ```
 
----
-
-## Attachments
-
-### Attach a file to a draft
+### Attachments
 
 ```bash
 python3 outlook_oauth_mail.py attach <draft_id> /path/to/file.pdf
-```
-
-Behavior:
-
-- files **<= 3 MB**: direct upload
-- files **> 3 MB**: Graph upload session / chunked upload
-
-### List attachments on a message
-
-```bash
 python3 outlook_oauth_mail.py attachments <message_id>
-```
-
-### Download one attachment
-
-```bash
 python3 outlook_oauth_mail.py download-attachment <message_id> <attachment_id> --outdir ./downloads
-```
-
-### Download all file attachments
-
-```bash
 python3 outlook_oauth_mail.py download-all-attachments <message_id> --outdir ./downloads
 ```
 
----
-
-## Mail management
-
-### List folders
+### Mail management
 
 ```bash
 python3 outlook_oauth_mail.py folders
-```
-
-### Mark read / unread
-
-```bash
 python3 outlook_oauth_mail.py mark <message_id> --read
-python3 outlook_oauth_mail.py mark <message_id> --unread
-```
-
-### Move a message
-
-```bash
 python3 outlook_oauth_mail.py move <message_id> archive
-python3 outlook_oauth_mail.py move <message_id> deleteditems
-```
-
-### Delete a message
-
-```bash
 python3 outlook_oauth_mail.py delete <message_id>
 ```
 
----
-
-## Export message body
-
-### Save body as plain text
+### Save message body
 
 ```bash
 python3 outlook_oauth_mail.py save-body <message_id> --outdir ./saved-mails
-```
-
-### Save body as HTML
-
-```bash
 python3 outlook_oauth_mail.py save-body <message_id> --outdir ./saved-mails --html
 ```
-
----
-
-## OAuth helper URL
-
-If you need an authorization URL:
-
-```bash
-python3 outlook_oauth_mail.py auth-url
-```
-
-By default the auth URL uses a scope pattern aligned with Outlook Graph read/write flows.
 
 ---
 
@@ -421,6 +385,14 @@ This project is useful if you want:
 - Microsoft Graph mail automation without a heavy app framework
 - refresh-token-based mailbox operations
 - scripting-friendly mail workflows on Linux servers or remote boxes
+
+---
+
+## Release status
+
+Current recommended starting point: **v0.1.0**
+
+This version is already capable of real-world mailbox tasks, including reading, sending, drafting, replying, uploading large attachments, downloading attachments, folder operations, and exporting message bodies.
 
 ---
 
