@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "outlook-oauth-mail-helper"
+version = "0.1.0"
+description = "A practical Python CLI for Outlook mail through Microsoft Graph with OAuth refresh-token support."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+  { name = "XXiuMing" }
+]
+requires-python = ">=3.10"
+dependencies = [
+  "requests>=2.25.0"
+]
+keywords = ["outlook", "microsoft-graph", "oauth", "email", "cli"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Communications :: Email",
+  "Environment :: Console"
+]
+
+[project.scripts]
+outlook-mail = "outlook_oauth_mail:main"
